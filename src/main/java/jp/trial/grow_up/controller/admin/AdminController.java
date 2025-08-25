@@ -28,8 +28,8 @@ public class AdminController {
     }
 
     //全てのユーザー一覧を取得
-    @GetMapping("/users")
-    public ResponseEntity<ApiResponse<List<User>>> getAllUsers(){
-
-    }
+//    @GetMapping("/users")
+//    public ResponseEntity<ApiResponse<List<User>>> getAllUsers(){
+//
+//    }
 }
