@@ -62,6 +62,7 @@ public class SkillService {
     }
 
 
-
-
+    public long getSumOfSkills() {
+        return skillRepository.count();
+    }
 }

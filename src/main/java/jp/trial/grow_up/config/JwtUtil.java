@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.xml.crypto.Data;
 import java.util.Date;
 
 @Component
@@ -18,13 +19,25 @@ public class JwtUtil {
 
     // jwt生成
     public  String generateToken(User user) {
-        long expirationTime = 1000 * 60 * 60 * 10; // 10時間
+        long expirationTime = 1000 * 60 * 60 ; // one hour
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // refresh token 生成
+    public String generateRefreshToken(User user){
+        long exprirationTime = 1000 * 60 * 60 * 168; //a week
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("role",user.getRole().name())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + exprirationTime))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()),SignatureAlgorithm.HS256)
                 .compact();
     }
 

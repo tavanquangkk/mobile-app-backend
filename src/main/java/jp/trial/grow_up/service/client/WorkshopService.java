@@ -130,4 +130,8 @@ public class WorkshopService {
         }
         return  res;
     }
+
+    public long getSumOfWorks() {
+        return workshopRepository.count();
+    }
 }

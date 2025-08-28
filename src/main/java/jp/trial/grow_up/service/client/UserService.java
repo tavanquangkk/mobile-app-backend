@@ -58,7 +58,7 @@ public class UserService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .authorities("USER") // 必要に応じてロール設定
+                .authorities(user.getRole().toString()) // 必要に応じてロール設定
                 .build();
     }
 
@@ -77,4 +77,7 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public long getSumOfUsers() {
+        return userRepository.count();
+    }
 }

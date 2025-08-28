@@ -30,7 +30,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-
+        // リクエストのパスが /api/v1/auth/ で始まる場合は、
+        // トークン検証を一切行わずに、後続のフィルターに処理を渡す
+        if (request.getServletPath().startsWith("/api/v1/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+            // このフィルターでの処理をここで終了させる
+        }
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

@@ -27,9 +27,56 @@ public class AdminController {
         this.workshopService = workshopService;
     }
 
+    //get sum users
+    @GetMapping("/sum/users")
+    public long getSumOfUsers(){
+        return userService.getSumOfUsers();
+    }
+
+    //get sum workshops
+    @GetMapping("/sum/workshops")
+    public long getSumOfWorks(){
+        return workshopService.getSumOfWorks();
+    }
+
+    //get sum skills
+    @GetMapping("/sum/skills")
+    public long getSumOfSkills(){
+        return skillService.getSumOfSkills();
+    }
+    //create user
+
     //全てのユーザー一覧を取得
 //    @GetMapping("/users")
 //    public ResponseEntity<ApiResponse<List<User>>> getAllUsers(){
 //
 //    }
+
+    //get a user
+
+    //update user
+
+    //delete user
+
+    //get all workshops
+
+    //get a workshop
+
+    //update a workshop
+
+    //delete a workshop
+
+    //get all skills
+
+    //get a skill
+
+    //update a skill
+
+    //delete a skill
+
+
+
+
+
+
 }

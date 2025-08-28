@@ -49,6 +49,7 @@ class UserController {
         return ResponseEntity.ok(res);
     }
 
+    //オススメユーザー一覧
     @GetMapping("/recommend")
     public ResponseEntity<ApiResponse<List<ResponseUserProfileDTO>>> handleGetRecommendedUsers(){
         ApiResponse<List<ResponseUserProfileDTO>> res = new ApiResponse<>();
