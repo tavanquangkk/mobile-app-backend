@@ -1,5 +1,10 @@
 package jp.trial.grow_up.dto.auth;
 
-public class JwtDTO {
+import lombok.Data;
 
+@Data
+public class JwtDTO {
+    String token;
+    long expiresIn;
+    String userRole;
 }

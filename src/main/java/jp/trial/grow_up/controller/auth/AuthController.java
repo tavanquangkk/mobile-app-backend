@@ -3,13 +3,12 @@ package jp.trial.grow_up.controller.auth;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jp.trial.grow_up.domain.client.User;
-import jp.trial.grow_up.dto.auth.LoginRequestDTO;
-import jp.trial.grow_up.dto.auth.SignupRequestDTO;
-import jp.trial.grow_up.dto.auth.SignupResponseDTO;
+import jp.trial.grow_up.dto.auth.*;
 import jp.trial.grow_up.service.client.UserService;
 import jp.trial.grow_up.config.JwtUtil;
 import jp.trial.grow_up.util.ApiResponse;
 import jp.trial.grow_up.util.convert.UserConvert;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +22,9 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    @Value("${jwt.expiration}")
+    private Long expiration;
+
     public AuthController(UserService userService,PasswordEncoder passwordEncoder,JwtUtil jwtUtil) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
@@ -32,7 +34,7 @@ public class AuthController {
     //ユーザー新規登録
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<SignupResponseDTO>> registerUser(@RequestBody SignupRequestDTO signupRequestDTO, HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<SignupResponseDTO>> registerUser(@RequestBody SignupRequestDTO signupRequestDTO,HttpServletResponse response) {
 
         ApiResponse<SignupResponseDTO> res = new ApiResponse<>();
 
@@ -45,18 +47,19 @@ public class AuthController {
             User savedUser = this.userService.handleSaveUser(convertedUser);
 
             String token = jwtUtil.generateToken(savedUser);
-            String refreshToken = jwtUtil.generateRefreshToken(savedUser);
 
-            // set refresh_token to cookie
-            Cookie refreshTokenCookie = new Cookie("refresh_token",refreshToken);
+            //refresh token 生成　→ cookie に追加する
+            String refreshToken = jwtUtil.generateRefreshToken(savedUser);
+            Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
             refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setSecure(true); // 本番環境ではtrueに
+            refreshTokenCookie.setSecure(true);
             refreshTokenCookie.setPath("/");
             refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7日間
             response.addCookie(refreshTokenCookie);
 
             SignupResponseDTO rsData = UserConvert.convertToSignupUserDTO(savedUser);
             rsData.setToken(token);
+            rsData.setRefreshToken(refreshToken);
             rsData.setRole(savedUser.getRole().name());
 
 
@@ -78,7 +81,7 @@ public class AuthController {
 
     // ログインロジック
     @PostMapping("/login")
-    public  ResponseEntity<ApiResponse<SignupResponseDTO>> login(@RequestBody LoginRequestDTO loginRequestDTO){
+    public  ResponseEntity<ApiResponse<SignupResponseDTO>> login(@RequestBody LoginRequestDTO loginRequestDTO,HttpServletResponse response){
             ApiResponse<SignupResponseDTO> res = new ApiResponse<>();
             User existingUser = this.userService.getUserByEmail(loginRequestDTO.getEmail());
 
@@ -90,9 +93,23 @@ public class AuthController {
             }
             //認証済　→ jwt発行
             String token = jwtUtil.generateToken(existingUser);
+            //refresh token
+            String refreshToken = jwtUtil.generateRefreshToken(existingUser);
+
+            // set refresh_token to cookie
+            Cookie refreshTokenCookie = new Cookie("refresh_token",refreshToken);
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setSecure(true); // 本番環境ではtrueに
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7日間
+            response.addCookie(refreshTokenCookie);
+
+            //create auth response and set data to it
             SignupResponseDTO userData =  UserConvert.convertToSignupUserDTO(existingUser);
             userData.setToken(token);
+            userData.setRefreshToken(refreshToken);
             userData.setRole(existingUser.getRole().name());
+
             res.setStatus("success");
             res.setMessage("ログイン成功");
             res.setData(userData);
@@ -100,13 +117,29 @@ public class AuthController {
             return ResponseEntity.ok(res);
     }
 
-    //refresh access_token
+    //Access tokenを再度取得する（有効期限切れた時モバイル用）
 
-    @GetMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@CookieValue("refresh_token") String refreshToken) {
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<RefreshResponseDTO>> refresh(@RequestBody RefreshRequestDTO refreshRequestDTO){
+        ApiResponse res = new ApiResponse<>();
+        String refreshToken = refreshRequestDTO.getRefreshToken();
         String email = jwtUtil.extractUsername(refreshToken);
         User currentUser = userService.getUserByEmail(email);
-       String newAccessToken = jwtUtil.generateToken(currentUser);
-        return  ResponseEntity.ok(newAccessToken);
+        if(currentUser == null){
+            res.setStatus("error");
+            res.setMessage("リフレッシュトーケンが正しくありません");
+            return ResponseEntity.badRequest().body(res);
+        }
+        String newAccessToken = jwtUtil.generateToken(currentUser);
+        RefreshResponseDTO resData = new RefreshResponseDTO();
+        resData.setNewAccessToken(newAccessToken);
+        res.setStatus("success");
+        res.setMessage("Access Tokenが生成された");
+        res.setData(resData);
+
+        return ResponseEntity.ok(res);
+
     }
+
+
 }

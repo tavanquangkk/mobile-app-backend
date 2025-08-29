@@ -5,6 +5,7 @@ import jp.trial.grow_up.domain.client.Workshop;
 import jp.trial.grow_up.dto.auth.SignupResponseDTO;
 import jp.trial.grow_up.dto.client.ResponseUserProfileDTO;
 import jp.trial.grow_up.repository.client.UserRepository;
+import jp.trial.grow_up.repository.client.WorkshopRepository;
 import jp.trial.grow_up.util.convert.UserConvert;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,9 +20,11 @@ import java.util.UUID;
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final WorkshopRepository workshopRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, WorkshopRepository workshopRepository) {
         this.userRepository = userRepository;
+        this.workshopRepository = workshopRepository;
     }
 
     //依存関係注入end
@@ -79,5 +82,11 @@ public class UserService implements UserDetailsService {
 
     public long getSumOfUsers() {
         return userRepository.count();
+    }
+
+    public boolean deleteUser(User currentUser) {
+        this.workshopRepository.deleteAllByHostId(currentUser.getId());
+        this.userRepository.delete(currentUser);
+        return true;
     }
 }

@@ -75,7 +75,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/api/v1/auth/register",
-                                "/api/v1/auth/login"
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/admin/login",
+                                "/api/v1/admin/test",
+                                "/api/v1/admin/refresh"
                         ).permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
 //                        .requestMatchers("/api/v1/**").hasAnyRole("USER", "ADMIN")
