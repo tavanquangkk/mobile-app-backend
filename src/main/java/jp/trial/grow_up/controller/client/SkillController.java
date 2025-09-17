@@ -1,7 +1,6 @@
 package jp.trial.grow_up.controller.client;
 
-import jp.trial.grow_up.domain.client.Skill;
-import jp.trial.grow_up.repository.client.SkillRepository;
+import jp.trial.grow_up.domain.Skill;
 import jp.trial.grow_up.service.client.SkillService;
 import jp.trial.grow_up.util.ApiResponse;
 import org.springframework.http.HttpStatus;
@@ -36,5 +35,6 @@ public class SkillController {
         res.setMessage("スキル一覧を取得できませんでした");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
+
 
 }

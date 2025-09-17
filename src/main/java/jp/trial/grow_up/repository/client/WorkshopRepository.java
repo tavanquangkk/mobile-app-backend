@@ -1,7 +1,7 @@
 package jp.trial.grow_up.repository.client;
 
 import jakarta.transaction.Transactional;
-import jp.trial.grow_up.domain.client.Workshop;
+import jp.trial.grow_up.domain.Workshop;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

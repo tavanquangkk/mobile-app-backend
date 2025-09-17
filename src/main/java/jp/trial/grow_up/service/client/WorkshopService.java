@@ -1,7 +1,7 @@
 package jp.trial.grow_up.service.client;
 
-import jp.trial.grow_up.domain.client.User;
-import jp.trial.grow_up.domain.client.Workshop;
+import jp.trial.grow_up.domain.User;
+import jp.trial.grow_up.domain.Workshop;
 import jp.trial.grow_up.dto.client.ResponseWorkshopHostDTO;
 import jp.trial.grow_up.dto.workshop.WorkshopDTO;
 import jp.trial.grow_up.repository.client.WorkshopRepository;

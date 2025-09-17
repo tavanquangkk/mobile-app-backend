@@ -1,6 +1,6 @@
 package jp.trial.grow_up.repository.client;
 
-import jp.trial.grow_up.domain.client.User;
+import jp.trial.grow_up.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

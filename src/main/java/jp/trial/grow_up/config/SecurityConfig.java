@@ -81,6 +81,18 @@ public class SecurityConfig {
                                 "/api/v1/admin/test",
                                 "/api/v1/admin/refresh"
                         ).permitAll()
+                        .requestMatchers(
+                                "/swagger-resources",
+                                "/swagger-resources/**",
+                                "/configuration/ui",
+                                "/configuration/security",
+                                "/swagger-ui.html",
+                                "/webjars/**",
+                                "/v3/api-docs/**",
+                                "/api/public/**",
+                                "/api/public/authenticate",
+                                "/actuator/*",
+                                "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
 //                        .requestMatchers("/api/v1/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()

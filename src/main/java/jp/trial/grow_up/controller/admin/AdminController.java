@@ -1,10 +1,11 @@
 package jp.trial.grow_up.controller.admin;
 
+import com.cloudinary.Api;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jp.trial.grow_up.config.JwtUtil;
-import jp.trial.grow_up.domain.client.User;
-import jp.trial.grow_up.domain.client.Workshop;
+import jp.trial.grow_up.domain.Skill;
+import jp.trial.grow_up.domain.User;
 import jp.trial.grow_up.dto.admin.RequestCreateUserDTO;
 import jp.trial.grow_up.dto.auth.JwtDTO;
 import jp.trial.grow_up.dto.auth.LoginRequestDTO;
@@ -285,14 +286,91 @@ public class AdminController {
 
     //delete a workshop
 
+
+    //create skill
+    @PostMapping("/skills")
+    public ResponseEntity<ApiResponse<Skill>> addMySkill(@RequestBody Skill skill){
+        ApiResponse res = new ApiResponse<>();
+        String skillName = skill.getName().toUpperCase().trim();
+        Skill createdSkill = this.skillService.createSkill(skillName);//すでに存在している場合、nullが返ってくる
+        if(createdSkill == null){
+            res.setStatus("error");
+            res.setMessage("このスキルの登録ができません");
+            return ResponseEntity.badRequest().body(res);
+        }
+        res.setStatus("success");
+        res.setMessage("スキルを登録できました");
+        res.setData(createdSkill);
+        return ResponseEntity.ok(res);
+    }
+
     //get all skills
+    @GetMapping("/skills")
+    public ResponseEntity<ApiResponse<List<Skill>>> getAllSkill(){
+        ApiResponse res = new ApiResponse<>();
+        List<Skill> allSkills = this.skillService.getAllSkills();
+        if(allSkills.isEmpty()){
+            res.setStatus("error");
+            res.setMessage("スキル一覧の取得に失敗しました");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        }
+        res.setStatus("success");
+        res.setMessage("スキル一覧の取得に成功しました");
+        res.setData(allSkills);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
 
     //get a skill
+    @GetMapping("/skills/{id}")
+    public ResponseEntity<ApiResponse<Skill>> getSkillById(@PathVariable("id") int id){
+        ApiResponse res = new ApiResponse<>();
+        Skill currentSkill = this.skillService.getSkill(id);
+        if(currentSkill == null){
+            res.setStatus("error");
+            res.setMessage("このスキルの取得に失敗しました");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        }
+        res.setStatus("success");
+        res.setMessage("このスキルの取得に成功しました");
+        res.setData(currentSkill);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
 
     //update a skill
+    @PutMapping("/skills/{id}")
+    public ResponseEntity<ApiResponse<Skill>> updateSkill(@PathVariable("id") int id,@RequestBody Skill updateSkill){
+        ApiResponse res = new ApiResponse<>();
+        Skill currentSkill = this.skillService.getSkill(id);
+
+        if(currentSkill == null){
+            res.setStatus("error");
+            res.setMessage("このスキルの取得に失敗しました");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        }
+        Skill resData = this.skillService.updateSkill(id, updateSkill.getName().toUpperCase().trim());
+        res.setStatus("success");
+        res.setMessage("このスキルの取得に成功しました");
+        res.setData(resData);
+
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
 
     //delete a skill
+    @DeleteMapping("/skills/{id}")
+    public ResponseEntity<ApiResponse<Skill>> deleteSkill(@PathVariable("id") int id){
+        ApiResponse res = new ApiResponse<>();
+        Skill currentSkill = this.skillService.getSkill(id);
 
+        if(currentSkill == null){
+            res.setStatus("error");
+            res.setMessage("このスキルの取得に失敗しました");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        }
+        this.skillService.deleteSkill(id);
+        res.setStatus("success");
+        res.setMessage("このスキルの削除に成功しました");
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
 
     @GetMapping("/test")
     public String test (){

@@ -1,4 +1,4 @@
-package jp.trial.grow_up.domain.client;
+package jp.trial.grow_up.domain;
 
 import jakarta.persistence.*;
 import jp.trial.grow_up.util.UserRole;
@@ -37,6 +37,12 @@ public class User {
     private String introduction;
     private String profileImageUrl;
     private String backgroundImageUrl;
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> following = new ArrayList<>();
+
     private long followerCount = 0;
     private long followingCount = 0;
     // 教えられるスキル
@@ -55,6 +61,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
     private List<Skill> learningSkills = new ArrayList<>();
+
     // private List<Commission> sentCommissions;
     // private List<Commission> receivedCommissions;
     // private List<QaPost> qaPosts;
