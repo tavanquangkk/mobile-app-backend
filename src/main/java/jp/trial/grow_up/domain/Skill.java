@@ -1,4 +1,4 @@
-package jp.trial.grow_up.domain.client;
+package jp.trial.grow_up.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

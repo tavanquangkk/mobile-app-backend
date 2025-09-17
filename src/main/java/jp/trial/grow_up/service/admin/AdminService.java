@@ -1,8 +1,8 @@
 package jp.trial.grow_up.service.admin;
 
-import jp.trial.grow_up.domain.client.Skill;
-import jp.trial.grow_up.domain.client.User;
-import jp.trial.grow_up.domain.client.Workshop;
+import jp.trial.grow_up.domain.Skill;
+import jp.trial.grow_up.domain.User;
+import jp.trial.grow_up.domain.Workshop;
 import jp.trial.grow_up.repository.client.SkillRepository;
 import jp.trial.grow_up.repository.client.UserRepository;
 import jp.trial.grow_up.repository.client.WorkshopRepository;

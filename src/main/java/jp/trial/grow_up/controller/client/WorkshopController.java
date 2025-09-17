@@ -1,6 +1,7 @@
 package jp.trial.grow_up.controller.client;
 
-import jp.trial.grow_up.domain.client.Workshop;
+import jp.trial.grow_up.domain.User;
+import jp.trial.grow_up.domain.Workshop;
 import jp.trial.grow_up.dto.workshop.WorkshopDTO;
 import jp.trial.grow_up.service.client.UserService;
 import jp.trial.grow_up.service.client.WorkshopService;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,6 +87,14 @@ public class WorkshopController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<WorkshopDTO>> updateWorkshop(@PathVariable("id") UUID id,@RequestBody Workshop workshop,Authentication authentication){
         ApiResponse res = new ApiResponse<>();
+        String email = authentication.getName();
+        User currentUser = this.userService.getUserByEmail(email);
+        User updateUser = this.userService.getUserById(this.workshopService.getWorkshopById(id).getHost().getId()).orElseThrow(()-> new RuntimeException("この勉強会の編集権限がありません。管理者へ連絡してください"));
+        if(!currentUser.equals(updateUser)){
+            res.setStatus("error");
+            res.setMessage("編集権限がありません。管理者へ連絡してください");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
         Workshop updatedWorkshop = this.workshopService.updateWorkshop(id,workshop);
         if(updatedWorkshop == null ){
             res.setStatus("error");

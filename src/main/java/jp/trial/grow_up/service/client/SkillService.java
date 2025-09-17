@@ -1,7 +1,6 @@
 package jp.trial.grow_up.service.client;
 
-import jp.trial.grow_up.controller.client.SkillController;
-import jp.trial.grow_up.domain.client.Skill;
+import jp.trial.grow_up.domain.Skill;
 import jp.trial.grow_up.repository.client.SkillRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +17,10 @@ public class SkillService {
     }
     //依存関係
 
-    //作成
+    //skill 作成 共通（注意：スキル名の大文字・小文字の区別をしない、存在していないスキルのみを追加可能）
     public Skill createSkill(String name){
         boolean isExisted = this.skillRepository.existsByName(name);
-        if(!isExisted){
+        if(isExisted){
             return null;
         }
         Skill skill = new Skill();
@@ -29,17 +28,17 @@ public class SkillService {
         return this.skillRepository.save(skill);
     }
 
-    //Skill 情報取得
+    //Skill 情報取得　共通
     public Skill getSkill(int id){
         return this.skillRepository.findById(id).orElseThrow(()-> new RuntimeException("このスキルが見つかりませんでした"));
     }
 
-    //全てskill一覧取得
+    //全てskill一覧取得　共通
     public List<Skill> getAllSkills(){
         return this.skillRepository.findAll();
     }
 
-    //Skill 編集
+    //Skill 編集 admin用
     public Skill updateSkill(int id,String name){
         Skill currentSkill = this.skillRepository.findById(id).orElseThrow(()-> new RuntimeException("このスキルが見つかりませんでした"));
         if(currentSkill != null){
@@ -50,7 +49,7 @@ public class SkillService {
         return null;
     }
 
-    //Skill 削除
+    //Skill 削除　共通
     public boolean deleteSkill(int id){
         boolean isExisted = this.skillRepository.existsById(id);
         if(!isExisted){
@@ -65,4 +64,14 @@ public class SkillService {
     public long getSumOfSkills() {
         return skillRepository.count();
     }
+
+    public Skill getSkillByName(String skillName) {
+        return skillRepository.findByName(skillName);
+    }
+
+    public Skill handleSave(Skill newSkill) {
+        return this.skillRepository.save(newSkill);
+    }
+
+
 }

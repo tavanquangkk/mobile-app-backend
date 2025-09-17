@@ -1,8 +1,7 @@
 package jp.trial.grow_up.service.client;
 
-import jp.trial.grow_up.domain.client.User;
-import jp.trial.grow_up.domain.client.Workshop;
-import jp.trial.grow_up.dto.auth.SignupResponseDTO;
+import jp.trial.grow_up.domain.User;
+import jp.trial.grow_up.dto.client.RequestUpdateInfor;
 import jp.trial.grow_up.dto.client.ResponseUserProfileDTO;
 import jp.trial.grow_up.repository.client.UserRepository;
 import jp.trial.grow_up.repository.client.WorkshopRepository;
@@ -70,11 +69,13 @@ public class UserService implements UserDetailsService {
     }
 
     //オススメユーザー一覧取得
-    public List<ResponseUserProfileDTO> getRecommendedUsers(){
+    public List<ResponseUserProfileDTO> getRecommendedUsers(User me){
         List<ResponseUserProfileDTO> userList = new ArrayList<>();
         List<User> tempList = this.userRepository.findTop10ByOrderByFollowerCountDesc();
         for(User user: tempList){
-            userList.add(UserConvert.convertToResponseUserProfileDTO(user));
+            if(!user.equals(me)){
+                userList.add(UserConvert.convertToResponseUserProfileDTO(user));
+            }
         }
         return userList;
     }
@@ -88,5 +89,15 @@ public class UserService implements UserDetailsService {
         this.workshopRepository.deleteAllByHostId(currentUser.getId());
         this.userRepository.delete(currentUser);
         return true;
+    }
+
+    public User updateUserInfo(String email,RequestUpdateInfor requestUpdateInfor) {
+        User currentUser = this.userRepository.findUserByEmail(email).orElseThrow(()-> new RuntimeException("ユーザーが見つかりませんでした"));
+        currentUser.setName(requestUpdateInfor.getName());
+        currentUser.setDepartment(requestUpdateInfor.getDepartment());
+        currentUser.setPosition(requestUpdateInfor.getPosition());
+        currentUser.setIntroduction(requestUpdateInfor.getIntroduction());
+        this.userRepository.save(currentUser);
+        return currentUser;
     }
 }

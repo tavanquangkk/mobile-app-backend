@@ -2,7 +2,7 @@ package jp.trial.grow_up.controller.auth;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jp.trial.grow_up.domain.client.User;
+import jp.trial.grow_up.domain.User;
 import jp.trial.grow_up.dto.auth.*;
 import jp.trial.grow_up.service.client.UserService;
 import jp.trial.grow_up.config.JwtUtil;

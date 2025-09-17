@@ -1,6 +1,6 @@
 package jp.trial.grow_up.util.convert;
 
-import jp.trial.grow_up.domain.client.User;
+import jp.trial.grow_up.domain.User;
 import jp.trial.grow_up.dto.auth.SignupRequestDTO;
 import jp.trial.grow_up.dto.auth.SignupResponseDTO;
 import jp.trial.grow_up.dto.client.ResponseUserProfileDTO;

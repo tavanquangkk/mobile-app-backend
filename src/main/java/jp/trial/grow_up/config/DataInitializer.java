@@ -1,6 +1,6 @@
 package jp.trial.grow_up.config;
 
-import jp.trial.grow_up.domain.client.User;
+import jp.trial.grow_up.domain.User;
 import jp.trial.grow_up.repository.client.UserRepository;
 import jp.trial.grow_up.util.UserRole;
 import org.springframework.boot.CommandLineRunner;

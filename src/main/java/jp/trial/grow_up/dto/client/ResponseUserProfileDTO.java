@@ -1,6 +1,6 @@
 package jp.trial.grow_up.dto.client;
 
-import jp.trial.grow_up.domain.client.Skill;
+import jp.trial.grow_up.domain.Skill;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +22,6 @@ public class ResponseUserProfileDTO {
     private String backgroundImageUrl;
     private long followerCount;
     private long followingCount;
-
     private List<Skill> teachableSkills;
     private List<Skill> learningSkills;
 }
